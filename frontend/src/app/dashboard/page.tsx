@@ -2,15 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { TrendingUp, TrendingDown, DollarSign, Activity, Eye, BarChart3, PieChart } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Activity, Eye, BarChart3, PieChart, ArrowDownToLine, ArrowUpFromLine, Wallet } from 'lucide-react';
 import Layout from '@/components/Layout';
 import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
 import PortfolioChart from '@/components/charts/PortfolioChart';
 import AssetAllocationChart from '@/components/charts/AssetAllocationChart';
 import MarketHeatmap from '@/components/charts/MarketHeatmap';
 import PerformanceMetrics from '@/components/widgets/PerformanceMetrics';
 import LiveTicker from '@/components/widgets/LiveTicker';
+import DepositModal from '@/components/wallet/DepositModal';
+import WithdrawalModal from '@/components/wallet/WithdrawalModal';
 import { api } from '@/lib/api';
+import { useToast } from '@/hooks/useToast';
 
 interface PortfolioItem {
   id: number;
@@ -39,6 +43,9 @@ export default function DashboardPage() {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [recentTrades, setRecentTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
+  const [depositModalOpen, setDepositModalOpen] = useState(false);
+  const [withdrawalModalOpen, setWithdrawalModalOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -81,6 +88,16 @@ export default function DashboardPage() {
   const portfolioValue = calculatePortfolioValue();
   const totalGainLoss = calculateTotalGainLoss();
   const totalValue = (user?.balance || 0) + portfolioValue;
+
+  const handleDepositInitiated = (amount: number, tier: string) => {
+    toast.success('Deposit Initiated', `$${amount.toLocaleString()} USDT deposit (${tier} tier) has been recorded`);
+    setDepositModalOpen(false);
+  };
+
+  const handleWithdrawalInitiated = (amount: number, address: string) => {
+    toast.success('Withdrawal Initiated', `$${amount.toLocaleString()} USDT withdrawal has been submitted`);
+    setWithdrawalModalOpen(false);
+  };
 
   if (loading) {
     return (
@@ -133,29 +150,54 @@ export default function DashboardPage() {
           </Card>
 
           <Card variant="glow" hover={true} className="group">
-            <div className="flex items-center">
-              <motion.div 
-                className="p-3 bg-blue-500/20 rounded-xl relative overflow-hidden"
-                whileHover={{ scale: 1.1, rotate: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Activity className="h-8 w-8 text-blue-400 relative z-10" />
-                <motion.div
-                  className="absolute inset-0 bg-blue-400/20"
-                  initial={{ opacity: 0 }}
-                  whileHover={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.div>
-              <div className="ml-4">
-                <p className="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Available Cash</p>
-                <motion.p 
-                  className="text-3xl font-bold text-white group-hover:text-blue-300 transition-colors"
-                  whileHover={{ scale: 1.05 }}
+            <div className="space-y-4">
+              <div className="flex items-center">
+                <motion.div 
+                  className="p-3 bg-blue-500/20 rounded-xl relative overflow-hidden"
+                  whileHover={{ scale: 1.1, rotate: -5 }}
+                  transition={{ type: "spring", stiffness: 300 }}
                 >
-                  ${user?.balance?.toLocaleString() || '0'}
-                </motion.p>
-                <p className="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors">Ready to invest</p>
+                  <Wallet className="h-8 w-8 text-blue-400 relative z-10" />
+                  <motion.div
+                    className="absolute inset-0 bg-blue-400/20"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+                <div className="ml-4">
+                  <p className="text-sm text-gray-400 font-medium group-hover:text-gray-300 transition-colors">Available Cash</p>
+                  <motion.p 
+                    className="text-3xl font-bold text-white group-hover:text-blue-300 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    ${user?.balance?.toLocaleString() || '0'}
+                  </motion.p>
+                  <p className="text-xs text-gray-500 mt-1 group-hover:text-gray-400 transition-colors">USDT Balance</p>
+                </div>
+              </div>
+              
+              {/* Wallet Action Buttons */}
+              <div className="flex gap-2">
+                <Button
+                  variant="crypto"
+                  size="sm"
+                  onClick={() => setDepositModalOpen(true)}
+                  className="flex-1 flex items-center gap-2"
+                >
+                  <ArrowDownToLine className="h-4 w-4" />
+                  Deposit
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setWithdrawalModalOpen(true)}
+                  className="flex-1 flex items-center gap-2"
+                  disabled={(user?.balance || 0) < 10}
+                >
+                  <ArrowUpFromLine className="h-4 w-4" />
+                  Withdraw
+                </Button>
               </div>
             </div>
           </Card>
@@ -454,6 +496,21 @@ export default function DashboardPage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Deposit Modal */}
+      <DepositModal
+        isOpen={depositModalOpen}
+        onClose={() => setDepositModalOpen(false)}
+        onDepositInitiated={handleDepositInitiated}
+      />
+
+      {/* Withdrawal Modal */}
+      <WithdrawalModal
+        isOpen={withdrawalModalOpen}
+        onClose={() => setWithdrawalModalOpen(false)}
+        availableBalance={user?.balance || 0}
+        onWithdrawalInitiated={handleWithdrawalInitiated}
+      />
     </Layout>
   );
 }

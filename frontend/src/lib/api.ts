@@ -29,6 +29,40 @@ class ApiClient {
     }
   }
 
+  // Validate current token
+  async validateToken(): Promise<boolean> {
+    if (!this.token) return false;
+    
+    try {
+      const response = await this.get('/auth/validate');
+      return !response.error;
+    } catch (error) {
+      console.error('Token validation failed:', error);
+      return false;
+    }
+  }
+
+  // Check if user is authenticated
+  isAuthenticated(): boolean {
+    return !!this.token;
+  }
+
+  // Get current user info
+  getCurrentUser(): any {
+    if (typeof window !== 'undefined') {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        try {
+          return JSON.parse(userData);
+        } catch (error) {
+          console.error('Failed to parse user data:', error);
+          localStorage.removeItem('user');
+        }
+      }
+    }
+    return null;
+  }
+
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -49,15 +83,50 @@ class ApiClient {
         headers,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return { error: data.error || 'Request failed' };
+      // Handle token expiration
+      if (response.status === 401) {
+        console.warn('Token expired or invalid, clearing auth data');
+        this.clearToken();
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('user');
+          // Redirect to login if not already there
+          if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+          }
+        }
+        return { error: 'Authentication expired. Please log in again.' };
       }
 
+      // Handle network errors
+      if (!response.ok) {
+        let errorMessage = 'Request failed';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+        } catch (e) {
+          errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        }
+        
+        console.error(`API Error [${response.status}]:`, {
+          url,
+          method: options.method || 'GET',
+          status: response.status,
+          statusText: response.statusText,
+          error: errorMessage
+        });
+        
+        return { error: errorMessage };
+      }
+
+      const data = await response.json();
       return { data };
     } catch (error) {
-      return { error: 'Network error' };
+      console.error('Network Error:', {
+        url,
+        method: options.method || 'GET',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      return { error: 'Network error. Please check your connection and try again.' };
     }
   }
 
@@ -153,6 +222,40 @@ class ApiClient {
 
   async bulkUpdateUsers(userIds: number[], action: string, value?: number) {
     return this.post('/admin/bulk-update', { userIds, action, value });
+  }
+
+  // Wallet endpoints
+  async createDeposit(amount: number, tier: string) {
+    return this.post('/wallet/deposit', { amount, tier });
+  }
+
+  async initiateWithdrawal(amount: number, address: string) {
+    return this.post('/wallet/withdraw', { amount, address });
+  }
+
+  async getTransactionHistory(type?: 'deposit' | 'withdrawal') {
+    const params = type ? `?type=${type}` : '';
+    return this.get(`/wallet/transactions${params}`);
+  }
+
+  async getWalletDetails() {
+    return this.get('/wallet/details');
+  }
+
+  async verifyWithdrawalAddress(address: string) {
+    return this.post('/wallet/verify-address', { address });
+  }
+
+  async getDepositAddress() {
+    return this.get('/wallet/deposit-address');
+  }
+
+  async confirmDeposit(transactionId: string) {
+    return this.post('/wallet/confirm-deposit', { transactionId });
+  }
+
+  async getWithdrawalLimits() {
+    return this.get('/wallet/withdrawal-limits');
   }
 }
 

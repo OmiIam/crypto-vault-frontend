@@ -189,7 +189,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.8 }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-8 max-w-5xl mx-auto mt-24"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 max-w-5xl mx-auto mt-24 px-4 sm:px-0"
           >
             {stats.map((stat, index) => (
               <motion.div
@@ -198,27 +198,27 @@ export default function HeroSection() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2 + index * 0.1 }}
                 whileHover={{ y: -4, scale: 1.02 }}
-                className="group text-center p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-amber-400/30 transition-all duration-500 relative overflow-hidden"
+                className="group text-center p-6 sm:p-8 rounded-3xl bg-white/5 backdrop-blur-xl border border-white/10 hover:bg-white/15 hover:border-amber-400/30 transition-all duration-500 relative overflow-hidden"
               >
                 {/* Hover glow effect */}
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
                 
-                <div className="relative flex justify-center mb-6">
+                <div className="relative flex justify-center mb-4 sm:mb-6">
                   <motion.div 
                     whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-blue-500/20 border border-white/10 group-hover:border-amber-400/40 transition-all duration-300 relative"
+                    className="p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-blue-500/20 border border-white/10 group-hover:border-amber-400/40 transition-all duration-300 relative"
                   >
-                    <stat.icon className="w-7 h-7 text-amber-400 relative z-10" />
+                    <stat.icon className="w-6 h-6 sm:w-7 sm:h-7 text-amber-400 relative z-10" />
                     {/* Icon glow */}
                     <div className="absolute inset-0 bg-amber-400/20 rounded-2xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   </motion.div>
                 </div>
 
                 <div className="relative">
-                  <div className="text-4xl lg:text-5xl font-black text-white mb-3 font-mono group-hover:text-amber-100 transition-colors duration-300">
+                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-2 sm:mb-3 font-mono group-hover:text-amber-100 transition-colors duration-300">
                     {stat.value}
                   </div>
-                  <div className="text-sm text-slate-400 font-semibold group-hover:text-amber-300 transition-colors duration-300 uppercase tracking-wider">
+                  <div className="text-xs sm:text-sm text-slate-400 font-semibold group-hover:text-amber-300 transition-colors duration-300 uppercase tracking-wider">
                     {stat.label}
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export default function HeroSection() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 group cursor-pointer"
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 group cursor-pointer z-20"
         onClick={() => document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' })}
       >
         {/* Scroll wheel */}

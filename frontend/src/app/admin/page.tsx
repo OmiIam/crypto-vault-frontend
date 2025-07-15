@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import UserDashboardModal from '@/components/admin/UserDashboardModal';
 import Leaderboard from '@/components/admin/Leaderboard';
+import TestComponent from '@/components/admin/TestComponent';
 import { api } from '@/lib/api';
 
 interface User {
@@ -37,15 +38,21 @@ export default function AdminPage() {
 
   const fetchUsers = async () => {
     try {
+      console.log('Fetching users...');
       const response = await api.getUsers();
+      
       if (response.data && Array.isArray(response.data)) {
+        console.log('Users fetched successfully:', response.data.length);
         setUsers(response.data as User[]);
+        setMessage(''); // Clear any previous error messages
       } else if (response.error) {
+        console.error('Error fetching users:', response.error);
         setMessage(response.error);
         setMessageType('error');
       }
     } catch (error) {
-      setMessage('Error fetching users');
+      console.error('Exception while fetching users:', error);
+      setMessage('Error fetching users. Please check your connection and try again.');
       setMessageType('error');
     } finally {
       setLoading(false);
@@ -60,43 +67,80 @@ export default function AdminPage() {
 
   const handleUpdateBalance = async (userId: number) => {
     const newBalance = editingBalance[userId];
-    if (!newBalance || isNaN(parseFloat(newBalance))) return;
+    if (!newBalance || isNaN(parseFloat(newBalance))) {
+      showMessage('Please enter a valid balance amount', 'error');
+      return;
+    }
+
+    // Validate user ID
+    if (!userId || userId <= 0) {
+      showMessage('Invalid user ID', 'error');
+      return;
+    }
+
+    const balanceValue = parseFloat(newBalance);
+    if (balanceValue < 0) {
+      showMessage('Balance cannot be negative', 'error');
+      return;
+    }
 
     setActionLoading(prev => ({ ...prev, [`balance-${userId}`]: true }));
 
     try {
-      const response = await api.updateUserBalance(userId, parseFloat(newBalance));
+      console.log(`Updating balance for user ${userId} to ${balanceValue}`);
+      const response = await api.updateUserBalance(userId, balanceValue);
+      
       if (response.error) {
+        console.error('Balance update failed:', response.error);
         showMessage(response.error, 'error');
       } else {
-        showMessage('Balance updated successfully');
+        console.log('Balance updated successfully');
+        showMessage(`Balance updated to $${balanceValue.toLocaleString()}`);
         setEditingBalance(prev => ({ ...prev, [userId]: '' }));
-        fetchUsers();
+        // Refresh user data
+        await fetchUsers();
       }
     } catch (error) {
-      showMessage('Error updating balance', 'error');
+      console.error('Exception while updating balance:', error);
+      showMessage('Error updating balance. Please try again.', 'error');
     } finally {
       setActionLoading(prev => ({ ...prev, [`balance-${userId}`]: false }));
     }
   };
 
   const handleResetUser = async (userId: number) => {
-    if (!confirm('Are you sure you want to reset this user\'s portfolio? This will delete all their trades and reset their balance to $10,000.')) {
+    // Validate user ID
+    if (!userId || userId <= 0) {
+      showMessage('Invalid user ID', 'error');
+      return;
+    }
+
+    // Find user to get their name for confirmation
+    const user = users.find(u => u.id === userId);
+    const userName = user ? user.username : `User ${userId}`;
+    
+    if (!confirm(`Are you sure you want to reset ${userName}'s portfolio? This will delete all their trades and reset their balance to $10,000.`)) {
       return;
     }
 
     setActionLoading(prev => ({ ...prev, [`reset-${userId}`]: true }));
 
     try {
+      console.log(`Resetting portfolio for user ${userId} (${userName})`);
       const response = await api.resetUserPortfolio(userId);
+      
       if (response.error) {
+        console.error('Portfolio reset failed:', response.error);
         showMessage(response.error, 'error');
       } else {
-        showMessage('User portfolio reset successfully');
-        fetchUsers();
+        console.log('Portfolio reset successfully');
+        showMessage(`${userName}'s portfolio reset successfully`);
+        // Refresh user data
+        await fetchUsers();
       }
     } catch (error) {
-      showMessage('Error resetting user portfolio', 'error');
+      console.error('Exception while resetting portfolio:', error);
+      showMessage('Error resetting user portfolio. Please try again.', 'error');
     } finally {
       setActionLoading(prev => ({ ...prev, [`reset-${userId}`]: false }));
     }
@@ -327,10 +371,22 @@ export default function AdminPage() {
         >
           <Card className="p-0 overflow-hidden">
             <div className="p-6 bg-white/5 border-b border-white/10">
-              <div className="flex items-center">
-                <Users className="h-5 w-5 text-blue-400 mr-2" />
-                <h2 className="text-xl font-bold text-white">User Management</h2>
-                <span className="ml-3 text-sm text-gray-400">({users.length} total users)</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Users className="h-5 w-5 text-blue-400 mr-2" />
+                  <h2 className="text-xl font-bold text-white">User Management</h2>
+                  <span className="ml-3 text-sm text-gray-400">({users.length} total users)</span>
+                </div>
+                <Button
+                  onClick={fetchUsers}
+                  variant="secondary"
+                  size="sm"
+                  className="flex items-center gap-2"
+                  disabled={loading}
+                >
+                  <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
               </div>
             </div>
 
@@ -552,6 +608,16 @@ export default function AdminPage() {
               </p>
             </div>
           </Card>
+        </motion.div>
+
+        {/* Frontend Testing Component */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="mt-8"
+        >
+          <TestComponent />
         </motion.div>
 
         {/* User Dashboard Modal */}

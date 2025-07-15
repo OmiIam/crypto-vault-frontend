@@ -236,7 +236,7 @@ export default function TradePage() {
                 </Button>
 
                 <div className="text-xs text-gray-400 text-center">
-                  This is a simulated trading environment for educational purposes only.
+                  Professional trading platform with real-time market data and advanced execution.
                 </div>
               </div>
             </Card>

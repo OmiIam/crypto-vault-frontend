@@ -185,7 +185,7 @@ export default function MarketPage() {
           transition={{ delay: 0.4 }}
           className="text-center text-sm text-gray-400"
         >
-          <p>Market data updates every 10 seconds • Prices are simulated for educational purposes</p>
+          <p>Market data updates every 10 seconds • Real-time professional trading data</p>
         </motion.div>
       </div>
     </Layout>

@@ -177,7 +177,7 @@ export default function Testimonials() {
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <div className="relative p-12 lg:p-16 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl rounded-3xl border border-white/20 group hover:border-amber-400/30 transition-all duration-500 overflow-hidden">
+          <div className="relative p-6 sm:p-8 lg:p-12 xl:p-16 bg-gradient-to-br from-white/10 via-white/5 to-transparent backdrop-blur-xl rounded-3xl border border-white/20 group hover:border-amber-400/30 transition-all duration-500 overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-amber-600/8 via-purple-600/5 to-blue-600/8 rounded-3xl" />
             
             {/* Testimonial shimmer */}
@@ -193,29 +193,29 @@ export default function Testimonials() {
                 className="relative z-10"
               >
                 {/* Quote */}
-                <div className="mb-8">
-                  <Quote className="w-12 h-12 text-amber-400 mb-6" />
-                  <blockquote className="text-2xl lg:text-3xl text-white leading-relaxed font-light">
+                <div className="mb-6 sm:mb-8">
+                  <Quote className="w-10 h-10 sm:w-12 sm:h-12 text-amber-400 mb-4 sm:mb-6" />
+                  <blockquote className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white leading-relaxed font-light">
                     "{testimonials[currentTestimonial].quote}"
                   </blockquote>
                 </div>
 
                 {/* Performance Metrics */}
-                <div className="grid grid-cols-3 gap-8 mb-8 p-6 bg-white/5 rounded-2xl border border-white/10">
-                  <div className="text-center">
-                    <div className="text-3xl font-black text-amber-400 mb-1">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 p-4 sm:p-6 bg-white/5 rounded-2xl border border-white/10">
+                  <div className="text-center py-4 sm:py-0">
+                    <div className="text-2xl sm:text-3xl font-black text-amber-400 mb-1">
                       {testimonials[currentTestimonial].metrics.profit}
                     </div>
                     <div className="text-sm text-slate-400 font-medium">Crypto Gains</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-black text-purple-400 mb-1">
+                  <div className="text-center py-4 sm:py-0 border-t sm:border-t-0 border-white/10">
+                    <div className="text-2xl sm:text-3xl font-black text-purple-400 mb-1">
                       {testimonials[currentTestimonial].metrics.aum}
                     </div>
                     <div className="text-sm text-slate-400 font-medium">Digital Assets</div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-3xl font-black text-blue-400 mb-1">
+                  <div className="text-center py-4 sm:py-0 border-t sm:border-t-0 border-white/10">
+                    <div className="text-2xl sm:text-3xl font-black text-blue-400 mb-1">
                       {testimonials[currentTestimonial].metrics.trades}
                     </div>
                     <div className="text-sm text-slate-400 font-medium">Trades Executed</div>
@@ -223,32 +223,32 @@ export default function Testimonials() {
                 </div>
 
                 {/* Author */}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-purple-500 rounded-full flex items-center justify-center">
-                      <User className="w-8 h-8 text-white" />
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-br from-amber-500 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                      <User className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                     </div>
-                    <div>
-                      <div className="text-xl font-bold text-white">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-lg sm:text-xl font-bold text-white">
                         {testimonials[currentTestimonial].name}
                       </div>
-                      <div className="text-amber-400 font-medium">
+                      <div className="text-amber-400 font-medium text-sm sm:text-base">
                         {testimonials[currentTestimonial].title}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <Building2 className="w-4 h-4 text-slate-400" />
-                        <span className="text-slate-400">{testimonials[currentTestimonial].company}</span>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Building2 className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                        <span className="text-slate-400 text-sm truncate">{testimonials[currentTestimonial].company}</span>
                         {testimonials[currentTestimonial].verified && (
-                          <CheckCircle className="w-4 h-4 text-amber-400" />
+                          <CheckCircle className="w-4 h-4 text-amber-400 flex-shrink-0" />
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Rating */}
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-1 justify-center sm:justify-end">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-6 h-6 text-amber-400 fill-current" />
+                      <Star key={i} className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 fill-current" />
                     ))}
                   </div>
                 </div>

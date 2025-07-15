@@ -96,10 +96,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      sm: 'px-4 py-2 text-sm h-8',
-      md: 'px-6 py-2.5 text-base h-10',
-      lg: 'px-8 py-3 text-lg h-12',
-      xl: 'px-12 py-4 text-xl h-16'
+      sm: 'px-3 py-2 text-sm h-8 sm:px-4 min-w-[44px]',
+      md: 'px-4 py-2.5 text-base h-10 sm:px-6 min-w-[44px]',
+      lg: 'px-6 py-3 text-lg h-12 sm:px-8 min-w-[44px]',
+      xl: 'px-8 py-4 text-xl h-16 sm:px-12 min-w-[44px]'
     };
 
     const glowEffect = glow ? 'animate-pulse shadow-2xl' : '';

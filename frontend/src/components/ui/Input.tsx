@@ -23,9 +23,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     };
 
     const baseClasses = `
-      w-full px-4 py-3 rounded-xl transition-all duration-300
+      w-full px-4 py-3 sm:py-3 rounded-xl transition-all duration-300
       focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed
-      placeholder:text-gray-500 relative
+      placeholder:text-gray-500 relative min-h-[44px] text-base
     `;
 
     const variants = {

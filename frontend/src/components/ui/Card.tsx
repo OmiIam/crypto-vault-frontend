@@ -77,7 +77,7 @@ export default function Card({
       className={`
         ${getVariantStyles()}
         ${getGradientOverlay()}
-        rounded-2xl p-6 transition-all duration-300
+        rounded-2xl p-4 sm:p-6 transition-all duration-300
         ${className}
       `}
       style={{

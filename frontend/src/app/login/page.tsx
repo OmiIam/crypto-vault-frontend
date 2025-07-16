@@ -3,55 +3,122 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
+import { Lock, Mail, User } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import PasswordInput from '@/components/ui/PasswordInput';
 import Card from '@/components/ui/Card';
-import { api } from '@/lib/api';
+import PasswordStrengthIndicator from '@/components/ui/PasswordStrengthIndicator';
+import ForgotPasswordModal from '@/components/ui/ForgotPasswordModal';
+import RememberMeCheckbox from '@/components/ui/RememberMeCheckbox';
+import { useAuth } from '@/hooks/useAuth';
+import { useEmailValidation } from '@/hooks/useEmailValidation';
+import { useToast } from '@/hooks/useToast';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: ''
   });
+  const [rememberMe, setRememberMe] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   
   const router = useRouter();
+  const { login, register, sendPasswordReset, isLoading, error, clearError } = useAuth();
+  const { toast } = useToast();
+  
+  // Email validation
+  const emailValidation = useEmailValidation(formData.email);
+  
+  // Form validation
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    
+    if (!isLogin && !formData.username.trim()) {
+      errors.username = 'Username is required';
+    }
+    
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailValidation.isValid && emailValidation.error) {
+      errors.email = emailValidation.error;
+    }
+    
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (!isLogin && formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    clearError();
+    
+    if (!validateForm()) {
+      return;
+    }
 
     try {
-      let response;
+      let result;
       
       if (isLogin) {
-        response = await api.login(formData.email, formData.password);
+        result = await login({
+          email: formData.email,
+          password: formData.password,
+          rememberMe
+        });
       } else {
-        response = await api.register(formData.username, formData.email, formData.password);
+        result = await register({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        });
       }
 
-      if (response.error) {
-        setError(response.error);
-      } else if (response.data && typeof response.data === 'object' && response.data !== null && 'user' in response.data) {
-        localStorage.setItem('user', JSON.stringify((response.data as any).user));
+      if (result.success) {
+        toast.success(
+          isLogin ? 'Welcome back!' : 'Account created!',
+          isLogin ? 'You have been logged in successfully' : 'Welcome to CryptoVault'
+        );
         router.push('/dashboard');
       }
     } catch (err) {
-      setError('An unexpected error occurred');
-    } finally {
-      setLoading(false);
+      console.error('Authentication error:', err);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }));
+    
+    // Clear field error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+  
+  const handleModeToggle = () => {
+    setIsLogin(!isLogin);
+    setFormErrors({});
+    clearError();
+  };
+  
+  const handleForgotPasswordSubmit = async (email: string) => {
+    return await sendPasswordReset(email);
   };
 
   return (
@@ -72,7 +139,7 @@ export default function LoginPage() {
               transition={{ delay: 0.2, duration: 0.5 }}
               className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center"
             >
-              <span className="text-2xl font-bold text-white">C</span>
+              <Lock className="h-8 w-8 text-white" />
             </motion.div>
             <h1 className="text-3xl font-bold text-white mb-2">
               {isLogin ? 'Welcome Back' : 'Get Started'}
@@ -96,36 +163,89 @@ export default function LoginPage() {
                   type="text"
                   value={formData.username}
                   onChange={handleInputChange}
-                  placeholder="Enter your username"
-                  required
-                  variant="default"
-                  className="placeholder-white placeholder-opacity-80"
+                  placeholder="Choose a username"
+                  error={formErrors.username}
+                  icon={<User className="h-5 w-5" />}
+                  disabled={isLoading}
+                  autoComplete="username"
                 />
               )}
 
-              <Input
-                label="Email Address"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter your email"
-                required
-                variant="default"
-                className="placeholder-white placeholder-opacity-80"
-              />
+              <div className="space-y-2">
+                <Input
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter your email"
+                  error={formErrors.email}
+                  icon={<Mail className="h-5 w-5" />}
+                  disabled={isLoading}
+                  autoComplete="email"
+                />
+                
+                {/* Email suggestions */}
+                {emailValidation.suggestions.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-sm text-gray-400"
+                  >
+                    Did you mean:{' '}
+                    {emailValidation.suggestions.map((suggestion, index) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, email: suggestion }))}
+                        className="text-blue-400 hover:text-blue-300 underline ml-1"
+                      >
+                        {suggestion}
+                        {index < emailValidation.suggestions.length - 1 && ', '}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
 
-              <Input
-                label="Password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                placeholder="Enter your password"
-                required
-                variant="default"
-                className="placeholder-white placeholder-opacity-80"
-              />
+              <div className="space-y-2">
+                <PasswordInput
+                  label="Password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter your password"
+                  error={formErrors.password}
+                  disabled={isLoading}
+                  autoComplete={isLogin ? 'current-password' : 'new-password'}
+                />
+                
+                {/* Password strength indicator for registration */}
+                {!isLogin && formData.password && (
+                  <PasswordStrengthIndicator
+                    password={formData.password}
+                    className="mt-2"
+                  />
+                )}
+              </div>
+              
+              {/* Remember Me and Forgot Password */}
+              {isLogin && (
+                <div className="flex items-center justify-between">
+                  <RememberMeCheckbox
+                    checked={rememberMe}
+                    onChange={setRememberMe}
+                    disabled={isLoading}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              )}
             </motion.div>
 
             {error && (
@@ -148,10 +268,11 @@ export default function LoginPage() {
             >
               <Button
                 type="submit"
-                loading={loading}
+                loading={isLoading}
                 className="w-full"
                 size="lg"
                 variant="crypto"
+                disabled={isLoading || emailValidation.isValidating}
               >
                 {isLogin ? 'Sign In' : 'Create Account'}
               </Button>
@@ -175,8 +296,10 @@ export default function LoginPage() {
             
             <div className="text-center relative z-10">
               <button
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-blue-400 hover:text-blue-300 underline-offset-2 hover:underline transition-colors font-semibold"
+                type="button"
+                onClick={handleModeToggle}
+                disabled={isLoading}
+                className="text-blue-400 hover:text-blue-300 underline-offset-2 hover:underline transition-colors font-semibold disabled:opacity-50"
               >
                 {isLogin 
                   ? "Don't have an account? Sign up" 
@@ -188,6 +311,13 @@ export default function LoginPage() {
 
         </Card>
       </motion.div>
+      
+      {/* Forgot Password Modal */}
+      <ForgotPasswordModal
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+        onSendReset={handleForgotPasswordSubmit}
+      />
     </div>
   );
 }

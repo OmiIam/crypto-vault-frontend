@@ -164,7 +164,7 @@ export default function PaymentTierCards({ onTierSelect, className = '' }: Payme
                 <Button
                   variant={tier.id === 'professional' ? 'crypto' : tier.id === 'custom' ? 'premium' : 'primary'}
                   size="lg"
-                  className="w-full"
+                  className={`w-full text-lg font-bold py-4 rounded-2xl flex items-center justify-center transition-all duration-300 ${tier.id === 'custom' ? 'bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-600 text-black hover:from-amber-300 hover:via-yellow-400 hover:to-amber-500' : ''}`}
                   onClick={() => onTierSelect(tier.amount, tier.id as any)}
                 >
                   {tier.id === 'custom' ? 'Enter Custom Amount' : `Deposit $${tier.amount.toLocaleString()}`}

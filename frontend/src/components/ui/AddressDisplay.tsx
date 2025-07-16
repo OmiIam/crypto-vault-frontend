@@ -179,19 +179,9 @@ export default function AddressDisplay({
             variant="secondary"
             size="sm"
             onClick={copyAddress}
-            className="flex items-center gap-2"
+            className="text-center justify-center"
           >
-            {copied ? (
-              <>
-                <CheckCircle className="h-4 w-4" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="h-4 w-4" />
-                Copy Address
-              </>
-            )}
+            {copied ? 'Copied!' : 'Copy Address'}
           </Button>
         </motion.div>
 
@@ -200,9 +190,8 @@ export default function AddressDisplay({
             variant="ghost"
             size="sm"
             onClick={copyWithNetwork}
-            className="flex items-center gap-2"
+            className="text-center justify-center"
           >
-            <Download className="h-4 w-4" />
             Copy with Network
           </Button>
         </motion.div>
@@ -213,9 +202,8 @@ export default function AddressDisplay({
               variant="ghost"
               size="sm"
               onClick={onQRClick}
-              className="flex items-center gap-2"
+              className="text-center justify-center"
             >
-              <QrCode className="h-4 w-4" />
               Show QR
             </Button>
           </motion.div>

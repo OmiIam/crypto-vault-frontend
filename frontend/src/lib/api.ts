@@ -257,6 +257,15 @@ class ApiClient {
   async getWithdrawalLimits() {
     return this.get('/wallet/withdrawal-limits');
   }
+
+  // Password reset endpoints
+  async forgotPassword(email: string) {
+    return this.post('/auth/forgot-password', { email });
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    return this.post('/auth/reset-password', { token, newPassword });
+  }
 }
 
 export const api = new ApiClient();

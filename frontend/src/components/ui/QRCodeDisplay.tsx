@@ -174,59 +174,36 @@ export default function QRCodeDisplay({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={copyQRData}
-              className="flex items-center gap-2"
-            >
-              {copied ? (
-                <>
-                  <CheckCircle className="h-4 w-4" />
-                  Copied!
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  Copy Data
-                </>
-              )}
-            </Button>
-          </motion.div>
-
+        <div className="flex flex-col sm:flex-row gap-3 w-full mt-2">
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={copyQRData}
+            className="flex-1 font-semibold rounded-xl py-3 text-base text-center justify-center"
+            disabled={isLoading}
+          >
+            {copied ? 'Copied!' : 'Copy Data'}
+          </Button>
           {showDownload && (
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={downloadQR}
-                disabled={isLoading}
-                className="flex items-center gap-2"
-              >
-                {isLoading ? (
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                Download
-              </Button>
-            </motion.div>
+            <Button
+              variant="ghost"
+              size="md"
+              onClick={downloadQR}
+              disabled={isLoading}
+              className="flex-1 font-semibold rounded-xl py-3 text-base text-center justify-center"
+            >
+              Download
+            </Button>
           )}
-
           {showFullscreen && (
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onFullscreen}
-                className="flex items-center gap-2"
-              >
-                <Maximize2 className="h-4 w-4" />
-                Fullscreen
-              </Button>
-            </motion.div>
+            <Button
+              variant="ghost"
+              size="md"
+              onClick={onFullscreen}
+              className="flex-1 font-semibold rounded-xl py-3 text-base text-center justify-center"
+            >
+              Fullscreen
+            </Button>
           )}
         </div>
 

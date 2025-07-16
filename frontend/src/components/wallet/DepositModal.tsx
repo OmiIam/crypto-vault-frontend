@@ -3,12 +3,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Copy, 
-  QrCode, 
   Shield, 
   AlertTriangle, 
   CheckCircle, 
-  ExternalLink,
   Clock,
   DollarSign
 } from 'lucide-react';
@@ -34,7 +31,7 @@ const MIN_DEPOSIT = 500;
 
 export default function DepositModal({ isOpen, onClose, onDepositInitiated }: DepositModalProps) {
   const [step, setStep] = useState<'select' | 'deposit' | 'confirm'>('select');
-  const [selectedAmount, setSelectedAmount] = useState<number>(0);
+  const [selectedAmount, setSelectedAmount] = useState<number>(500);
   const [selectedTier, setSelectedTier] = useState<'starter' | 'professional' | 'custom'>('starter');
   const [customAmount, setCustomAmount] = useState<string>('');
   const [addressVerified, setAddressVerified] = useState(false);
@@ -48,7 +45,7 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
   useEffect(() => {
     if (!isOpen) {
       setStep('select');
-      setSelectedAmount(0);
+      setSelectedAmount(500);
       setCustomAmount('');
       setAddressVerified(false);
       setLastDigits('');
@@ -57,23 +54,32 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
   }, [isOpen]);
 
   const handleTierSelect = (amount: number, tier: 'starter' | 'professional' | 'custom') => {
-    setSelectedAmount(amount);
-    setSelectedTier(tier);
-    if (tier === 'custom') {
-      setStep('deposit');
-    } else {
-      setStep('deposit');
+    try {
+      console.log('Tier selected:', { amount, tier });
+      setSelectedAmount(amount);
+      setSelectedTier(tier);
+      if (tier === 'custom') {
+        setStep('deposit');
+      } else {
+        setStep('deposit');
+      }
+    } catch (error) {
+      console.error('Error in handleTierSelect:', error);
     }
   };
 
   const handleCustomAmountSubmit = () => {
-    const amount = parseFloat(customAmount);
-    if (amount < MIN_DEPOSIT) {
-      toast.error('Invalid Amount', `Minimum deposit is $${MIN_DEPOSIT} USDT`);
-      return;
+    try {
+      const amount = parseFloat(customAmount);
+      if (amount < MIN_DEPOSIT) {
+        toast.error('Invalid Amount', `Minimum deposit is $${MIN_DEPOSIT} USDT`);
+        return;
+      }
+      setSelectedAmount(amount);
+      setStep('deposit');
+    } catch (error) {
+      console.error('Error in handleCustomAmountSubmit:', error);
     }
-    setSelectedAmount(amount);
-    setStep('deposit');
   };
 
   const handleQRFullscreen = () => {
@@ -81,11 +87,19 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
   };
 
   const handleAddressVerification = () => {
-    if (lastDigits.toLowerCase() === lastSixDigits.toLowerCase()) {
-      setAddressVerified(true);
-      toast.success('Address Verified', 'You have successfully verified the wallet address');
-    } else {
-      toast.error('Verification Failed', 'The last 6 digits do not match. Please check and try again.');
+    try {
+      if (lastDigits.toLowerCase() === lastSixDigits.toLowerCase()) {
+        setAddressVerified(true);
+        toast.success('Address Verified', 'You have successfully verified the wallet address');
+      } else {
+        toast.error('Verification Failed', 'The last 6 digits do not match. Please check and try again.');
+      }
+    } catch (error) {
+      console.error('Error in handleAddressVerification:', error);
+      // Fallback verification without toast
+      if (lastDigits.toLowerCase() === lastSixDigits.toLowerCase()) {
+        setAddressVerified(true);
+      }
     }
   };
 
@@ -122,7 +136,26 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3 }}
           >
-            <PaymentTierCards onTierSelect={handleTierSelect} />
+            <div className="space-y-6">
+              {/* Quick Deposit Option */}
+              <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-white mb-3">Quick Deposit</h3>
+                <p className="text-gray-300 text-sm mb-4">Start with the minimum deposit amount of ${MIN_DEPOSIT} USDT</p>
+                <Button 
+                  onClick={() => handleTierSelect(MIN_DEPOSIT, 'starter')}
+                  variant="crypto"
+                  className="w-full"
+                >
+                  Deposit ${MIN_DEPOSIT} USDT
+                </Button>
+              </div>
+              
+              {/* Tier Selection */}
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-4">Or choose a tier:</h3>
+                <PaymentTierCards onTierSelect={handleTierSelect} />
+              </div>
+            </div>
           </motion.div>
         )}
 
@@ -136,7 +169,7 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
             className="space-y-6"
           >
             {/* Custom Amount Input */}
-            {selectedTier === 'custom' && selectedAmount === 0 && (
+            {selectedTier === 'custom' && !customAmount && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -163,7 +196,7 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
             )}
 
             {/* Deposit Details */}
-            {selectedAmount > 0 && (
+            {((selectedTier !== 'custom' && selectedAmount > 0) || (selectedTier === 'custom' && customAmount && parseFloat(customAmount) >= MIN_DEPOSIT)) && (
               <>
                 <div className="bg-white/15 rounded-xl p-4 border border-white/25">
                   <div className="flex items-center justify-between">
@@ -184,44 +217,24 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
                   message="Only send USDT on the TRC20 network. Sending on other networks will result in permanent loss of funds."
                 />
 
-                {/* QR Code and Address */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                      <QrCode className="h-5 w-5" />
-                      QR Code
-                    </h3>
-                    <div className="bg-white p-4 rounded-xl">
-                      <img 
-                        src={generateQRCode()} 
-                        alt="USDT Deposit QR Code"
-                        className="w-full h-auto"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                      <Shield className="h-5 w-5" />
-                      Wallet Address
-                    </h3>
-                    <div className="bg-white/15 rounded-xl p-4 border border-white/25">
-                      <p className="text-sm text-gray-300 mb-2">Network: {NETWORK}</p>
-                      <div className="flex items-center gap-2">
-                        <code className="text-sm text-white bg-black/20 px-2 py-1 rounded break-all">
-                          {USDT_ADDRESS}
-                        </code>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={copyAddress}
-                          className="flex-shrink-0"
-                        >
-                          {copied ? <CheckCircle className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                {/* Professional Address and QR Display */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <AddressDisplay
+                    address={USDT_ADDRESS}
+                    network={NETWORK}
+                    label="Deposit Address"
+                    showQR={true}
+                    onQRClick={handleQRFullscreen}
+                    allowObfuscation={true}
+                  />
+                  
+                  <QRCodeDisplay
+                    address={USDT_ADDRESS}
+                    network={NETWORK}
+                    amount={selectedAmount}
+                    size="md"
+                    onFullscreen={handleQRFullscreen}
+                  />
                 </div>
 
                 {/* Address Verification */}
@@ -283,19 +296,9 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
                     onClick={handleDepositConfirm}
                     disabled={!addressVerified || depositStatus === 'pending'}
                     loading={depositStatus === 'pending'}
-                    className="flex-1"
+                    className="flex-1 flex items-center justify-center"
                   >
-                    {depositStatus === 'pending' ? (
-                      <>
-                        <Clock className="h-4 w-4 mr-2" />
-                        Processing Deposit...
-                      </>
-                    ) : (
-                      <>
-                        <Shield className="h-4 w-4 mr-2" />
-                        I Have Sent the Funds
-                      </>
-                    )}
+                    {depositStatus === 'pending' ? 'Processing Deposit...' : 'I Have Sent the Funds'}
                   </Button>
                 </div>
               </>

@@ -99,6 +99,7 @@ export default function LoginPage() {
                   placeholder="Enter your username"
                   required
                   variant="default"
+                  className="placeholder-white placeholder-opacity-80"
                 />
               )}
 
@@ -111,6 +112,7 @@ export default function LoginPage() {
                 placeholder="Enter your email"
                 required
                 variant="default"
+                className="placeholder-white placeholder-opacity-80"
               />
 
               <Input
@@ -122,6 +124,7 @@ export default function LoginPage() {
                 placeholder="Enter your password"
                 required
                 variant="default"
+                className="placeholder-white placeholder-opacity-80"
               />
             </motion.div>
 
@@ -170,10 +173,10 @@ export default function LoginPage() {
               </div>
             </div>
             
-            <div className="text-center">
+            <div className="text-center relative z-10">
               <button
                 onClick={() => setIsLogin(!isLogin)}
-                className="text-gray-200 hover:text-white transition-colors font-medium"
+                className="text-blue-400 hover:text-blue-300 underline-offset-2 hover:underline transition-colors font-semibold"
               >
                 {isLogin 
                   ? "Don't have an account? Sign up" 

@@ -77,7 +77,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: 'Email Support',
-    value: 'support@tradingpro.com',
+    value: 'support@cryptox360vaultsmarket.com',
     subtitle: 'Response within 2 hours'
   },
   {
@@ -143,7 +143,6 @@ export default function Footer() {
                         className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 whitespace-nowrap"
                       >
                         Subscribe
-                        <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </div>
                     <p className="text-xs text-gray-400">
@@ -173,7 +172,7 @@ export default function Footer() {
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
                   <TrendingUp className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">TradingPro</span>
+                <span className="text-xl font-bold text-white">CryptoX360</span>
               </div>
               
               <p className="text-gray-300 mb-6 leading-relaxed">
@@ -345,7 +344,6 @@ export default function Footer() {
                 onClick={() => window.location.href = '/login'}
               >
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </motion.div>
           </div>

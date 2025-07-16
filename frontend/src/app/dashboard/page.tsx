@@ -178,24 +178,22 @@ export default function DashboardPage() {
               </div>
               
               {/* Wallet Action Buttons */}
-              <div className="flex gap-2">
+              <div className="flex gap-3 mt-2">
                 <Button
-                  variant="crypto"
-                  size="sm"
+                  size="md"
+                  className="flex-1 flex items-center justify-center gap-2 font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg hover:shadow-xl transition-all duration-200 h-12 text-base"
                   onClick={() => setDepositModalOpen(true)}
-                  className="flex-1 flex items-center gap-2"
                 >
-                  <ArrowDownToLine className="h-4 w-4" />
+                  <ArrowDownToLine className="h-5 w-5" />
                   Deposit
                 </Button>
                 <Button
-                  variant="secondary"
-                  size="sm"
+                  size="md"
+                  className="flex-1 flex items-center justify-center gap-2 font-semibold bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl transition-all duration-200 h-12 text-base"
                   onClick={() => setWithdrawalModalOpen(true)}
-                  className="flex-1 flex items-center gap-2"
                   disabled={(user?.balance || 0) < 10}
                 >
-                  <ArrowUpFromLine className="h-4 w-4" />
+                  <ArrowUpFromLine className="h-5 w-5" />
                   Withdraw
                 </Button>
               </div>

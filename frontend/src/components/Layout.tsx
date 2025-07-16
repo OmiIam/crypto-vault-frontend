@@ -20,7 +20,7 @@ const navigation = [
 
 export default function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ username: string; balance: number; isAdmin?: boolean } | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -38,18 +38,18 @@ export default function Layout({ children }: LayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 dashboard-font">
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       
       <div className="relative flex h-screen">
         <motion.div
           initial={false}
           animate={{ x: sidebarOpen ? 0 : -256 }}
-          className="fixed inset-y-0 left-0 z-50 w-64 bg-black/20 backdrop-blur-xl border-r border-white/10 lg:translate-x-0 lg:static lg:inset-0"
+          className="fixed inset-y-0 left-0 z-50 w-64 bg-black/20 backdrop-blur-xl border-r border-white/10 lg:translate-x-0 lg:static lg:inset-0 dashboard-font"
         >
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full dashboard-font">
             <div className="flex items-center justify-between p-6">
-              <h1 className="text-xl font-bold text-white">TradingPro</h1>
+              <h1 className="text-xl font-bold text-white">CryptoX360</h1>
               <button
                 onClick={() => setSidebarOpen(false)}
                 className="lg:hidden text-white"
@@ -81,7 +81,7 @@ export default function Layout({ children }: LayoutProps) {
               })}
             </nav>
 
-            <div className="p-4 border-t border-white/10">
+            <div className="p-4 border-t border-white/10 dashboard-font">
               {user?.isAdmin && (
                 <motion.a
                   href="/admin"

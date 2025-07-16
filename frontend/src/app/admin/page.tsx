@@ -119,7 +119,7 @@ export default function AdminPage() {
     const user = users.find(u => u.id === userId);
     const userName = user ? user.username : `User ${userId}`;
     
-    if (!confirm(`Are you sure you want to reset ${userName}'s portfolio? This will delete all their trades and reset their balance to $10,000.`)) {
+    if (!confirm(`Are you sure you want to reset ${userName}'s portfolio? This will delete all their trades and reset their balance to $0.`)) {
       return;
     }
 
@@ -266,18 +266,18 @@ export default function AdminPage() {
             <Button
               onClick={fetchUsers}
               variant="secondary"
-              size="sm"
+              size="lg"
+              className="px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-xl transition-all duration-200 text-base text-center justify-center"
             >
-              <RefreshCw className="h-4 w-4 mr-2" />
               Refresh
             </Button>
             <Button
               onClick={handleResetAll}
               loading={actionLoading['reset-all']}
               variant="danger"
-              size="sm"
+              size="lg"
+              className="px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-xl transition-all duration-200 text-base text-center justify-center"
             >
-              <Trash2 className="h-4 w-4 mr-2" />
               Reset All
             </Button>
           </div>
@@ -381,196 +381,131 @@ export default function AdminPage() {
                   onClick={fetchUsers}
                   variant="secondary"
                   size="sm"
-                  className="flex items-center gap-2"
+                  className="px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-xl transition-all duration-200 text-base text-center justify-center"
                   disabled={loading}
                 >
-                  <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                   Refresh
                 </Button>
               </div>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gradient-to-r from-white/20 via-white/15 to-white/20 backdrop-blur-sm">
-                  <tr className="border-b border-white/10">
-                    <th className="px-6 py-5 text-left">
-                      <motion.button
-                        onClick={selectAllUsers}
-                        className="flex items-center gap-3 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-300 group"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <motion.div
-                          className="relative"
-                          whileHover={{ rotate: 5 }}
-                          transition={{ type: "spring", stiffness: 300 }}
+              <div className="flex flex-col gap-4">
+                {users.map((user, index) => (
+                  <motion.div
+                    key={user.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group bg-gradient-to-r from-white/10 to-white/5 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-white/10 hover:border-blue-400/60 hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="flex items-center gap-3 w-full sm:w-1/3">
+                      {!user.isAdmin && (
+                        <motion.button
+                          onClick={() => toggleUserSelection(user.id)}
+                          className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
                         >
-                          {selectedUsers.length === users.filter(u => !u.isAdmin).length ? (
-                            <CheckSquare className="h-4 w-4 text-blue-400" />
-                          ) : (
-                            <Square className="h-4 w-4 group-hover:text-blue-400 transition-colors" />
-                          )}
-                        </motion.div>
-                        <span className="group-hover:text-blue-300 transition-colors">User Information</span>
-                        <motion.div 
-                          className="h-px bg-gradient-to-r from-transparent via-blue-400/50 to-transparent w-0 group-hover:w-16 transition-all duration-500"
-                        />
-                      </motion.button>
-                    </th>
-                    <th className="px-6 py-5 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <span className="text-sm font-semibold text-gray-200">Portfolio Balance</span>
-                        <motion.div 
-                          className="w-2 h-2 bg-green-400 rounded-full"
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        />
-                      </div>
-                    </th>
-                    <th className="px-6 py-5 text-center">
-                      <span className="text-sm font-semibold text-gray-200">Management Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-white/10 bg-gradient-to-b from-transparent to-white/5">
-                  {users.map((user, index) => (
-                    <motion.tr
-                      key={user.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      whileHover={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                        scale: 1.01,
-                        transition: { type: "spring", stiffness: 400, damping: 25 }
-                      }}
-                      className="group hover:bg-gradient-to-r hover:from-white/15 hover:via-white/10 hover:to-white/15 transition-all duration-500 cursor-pointer border-l-2 border-transparent hover:border-blue-400/60"
-                    >
-                      <td className="px-6 py-6">
-                        <div className="flex items-center gap-4">
-                          {!user.isAdmin && (
-                            <motion.button
-                              onClick={() => toggleUserSelection(user.id)}
-                              className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-white/10"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              <motion.div
-                                animate={selectedUsers.includes(user.id) ? { scale: [1, 1.2, 1] } : {}}
-                                transition={{ duration: 0.3 }}
-                              >
-                                {selectedUsers.includes(user.id) ? (
-                                  <CheckSquare className="h-4 w-4 text-blue-400" />
-                                ) : (
-                                  <Square className="h-4 w-4" />
-                                )}
-                              </motion.div>
-                            </motion.button>
-                          )}
-                          <div>
-                            <div className="flex items-center">
-                              <motion.span 
-                                className="font-medium text-white group-hover:text-blue-300 transition-colors"
-                                whileHover={{ x: 2 }}
-                              >
-                                {user.username}
-                              </motion.span>
-                              {user.isAdmin && (
-                                <motion.span 
-                                  className="ml-2 px-2 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full"
-                                  whileHover={{ scale: 1.1 }}
-                                  transition={{ type: "spring", stiffness: 300 }}
-                                >
-                                  Admin
-                                </motion.span>
-                              )}
-                            </div>
-                            <div className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">{user.email}</div>
-                            <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
-                              Joined {new Date(user.createdAt).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="space-y-3">
-                          <motion.div 
-                            className="font-bold text-xl text-white group-hover:text-green-300 transition-colors flex items-center gap-2"
-                            whileHover={{ scale: 1.05 }}
+                          <motion.div
+                            animate={selectedUsers.includes(user.id) ? { scale: [1, 1.2, 1] } : {}}
+                            transition={{ duration: 0.3 }}
                           >
-                            <span className="text-green-400 text-sm">$</span>
-                            {user.balance.toLocaleString()}
+                            {selectedUsers.includes(user.id) ? (
+                              <CheckSquare className="h-4 w-4 text-blue-400" />
+                            ) : (
+                              <Square className="h-4 w-4" />
+                            )}
                           </motion.div>
-                          <div className="flex items-center gap-2">
-                            <motion.div whileHover={{ scale: 1.02 }}>
-                              <Input
-                                placeholder="New balance"
-                                value={editingBalance[user.id] || ''}
-                                onChange={(e) => setEditingBalance(prev => ({ 
-                                  ...prev, 
-                                  [user.id]: e.target.value 
-                                }))}
-                                className="text-sm py-2 px-3 w-28 bg-white/15"
-                                variant="minimal"
-                              />
-                            </motion.div>
-                            <motion.div whileHover={{ scale: 1.05 }}>
-                              <Button
-                                onClick={() => handleUpdateBalance(user.id)}
-                                loading={actionLoading[`balance-${user.id}`]}
-                                size="sm"
-                                disabled={!editingBalance[user.id]}
-                                variant="secondary"
-                              >
-                                Update
-                              </Button>
-                            </motion.div>
-                          </div>
+                        </motion.button>
+                      )}
+                      <div>
+                        <div className="flex items-center flex-wrap">
+                          <motion.span 
+                            className="font-medium text-white group-hover:text-blue-300 transition-colors"
+                            whileHover={{ x: 2 }}
+                          >
+                            {user.username}
+                          </motion.span>
+                          {user.isAdmin && (
+                            <motion.span 
+                              className="ml-2 px-2 py-1 text-xs bg-purple-500/20 text-purple-300 rounded-full"
+                              whileHover={{ scale: 1.1 }}
+                              transition={{ type: "spring", stiffness: 300 }}
+                            >
+                              Admin
+                            </motion.span>
+                          )}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-center gap-3">
-                          <motion.div whileHover={{ scale: 1.05 }}>
-                            <Button
-                              onClick={() => handleViewUser(user.id, user.username)}
-                              size="sm"
-                              variant="ghost"
-                              className="text-blue-400 hover:text-blue-300"
-                            >
-                              <Eye className="h-3 w-3 mr-1" />
-                              View
-                            </Button>
-                          </motion.div>
-                          <motion.div whileHover={{ scale: 1.05 }}>
-                            <Button
-                              onClick={() => handleAddBonus(user.id, 1000)}
-                              loading={actionLoading[`bonus-${user.id}`]}
-                              size="sm"
-                              variant="secondary"
-                            >
-                              <Plus className="h-3 w-3 mr-1" />
-                              $1K
-                            </Button>
-                          </motion.div>
-                          <motion.div whileHover={{ scale: 1.05 }}>
-                            <Button
-                              onClick={() => handleResetUser(user.id)}
-                              loading={actionLoading[`reset-${user.id}`]}
-                              size="sm"
-                              variant="danger"
-                              disabled={user.isAdmin}
-                            >
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Reset
-                            </Button>
-                          </motion.div>
+                        <div className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors break-all">{user.email}</div>
+                        <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
+                          Joined {new Date(user.createdAt).toLocaleDateString()}
                         </div>
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full sm:w-1/3">
+                      <motion.div 
+                        className="font-bold text-xl text-white group-hover:text-green-300 transition-colors flex items-center gap-2"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <span className="text-green-400 text-sm">$</span>
+                        {user.balance.toLocaleString()}
+                      </motion.div>
+                      <div className="flex items-center gap-2 w-full">
+                        <Input
+                          placeholder="New balance"
+                          value={editingBalance[user.id] || ''}
+                          onChange={(e) => setEditingBalance(prev => ({ 
+                            ...prev, 
+                            [user.id]: e.target.value 
+                          }))}
+                          className="text-sm py-2 px-3 w-full sm:w-28 bg-white/15"
+                          variant="minimal"
+                        />
+                        <Button
+                          onClick={() => handleUpdateBalance(user.id)}
+                          loading={actionLoading[`balance-${user.id}`]}
+                          size="sm"
+                          disabled={!editingBalance[user.id]}
+                          variant="secondary"
+                          className="w-full sm:w-auto"
+                        >
+                          Update
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-1/3 justify-end">
+                      <Button
+                        onClick={() => handleViewUser(user.id, user.username)}
+                        size="sm"
+                        variant="ghost"
+                        className="text-blue-400 hover:text-blue-300 w-full sm:w-auto"
+                      >
+                        View
+                      </Button>
+                      <Button
+                        onClick={() => handleAddBonus(user.id, 1000)}
+                        loading={actionLoading[`bonus-${user.id}`]}
+                        size="sm"
+                        variant="secondary"
+                        className="w-full sm:w-auto"
+                      >
+                        $1K
+                      </Button>
+                      <Button
+                        onClick={() => handleResetUser(user.id)}
+                        loading={actionLoading[`reset-${user.id}`]}
+                        size="sm"
+                        variant="danger"
+                        disabled={user.isAdmin}
+                        className="w-full sm:w-auto"
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </Card>
         </motion.div>

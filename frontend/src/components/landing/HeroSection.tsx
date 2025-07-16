@@ -85,7 +85,7 @@ export default function HeroSection() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="space-y-6"
           >
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[0.9] max-w-5xl mx-auto">
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-tight max-w-5xl mx-auto">
               <span className="block">
                 <span className="bg-gradient-to-r from-white via-amber-100 to-white bg-clip-text text-transparent">
                   360° Crypto &
@@ -261,68 +261,6 @@ export default function HeroSection() {
               ))}
             </motion.div>
           </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Enhanced Scroll indicator with interactive elements */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 2, duration: 0.6 }}
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 group cursor-pointer z-20"
-        onClick={() => document.querySelector('#features')?.scrollIntoView({ behavior: 'smooth' })}
-      >
-        {/* Scroll wheel */}
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          whileHover={{ scale: 1.1 }}
-          className="w-8 h-12 border-2 border-white/40 group-hover:border-amber-400/60 rounded-full flex justify-center relative overflow-hidden transition-colors duration-300"
-        >
-          {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-b from-amber-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-full" />
-          
-          <motion.div
-            animate={{ y: [0, 16, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            className="w-1 h-4 bg-white/60 group-hover:bg-amber-400/80 rounded-full mt-2 transition-colors duration-300"
-          />
-        </motion.div>
-        
-        {/* Scroll text */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 0.5 }}
-          className="text-center mt-3"
-        >
-          <span className="text-xs text-white/50 group-hover:text-amber-400/70 transition-colors duration-300 font-medium tracking-wider">
-            SCROLL
-          </span>
-        </motion.div>
-        
-        {/* Interactive particles around scroll indicator */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-amber-400/40 rounded-full"
-              style={{
-                top: `${20 + Math.sin(i * 60 * Math.PI / 180) * 20}px`,
-                left: `${20 + Math.cos(i * 60 * Math.PI / 180) * 20}px`,
-              }}
-              animate={{
-                scale: [0, 1, 0],
-                opacity: [0, 0.6, 0],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.2,
-                ease: "easeInOut"
-              }}
-            />
-          ))}
         </div>
       </motion.div>
     </section>

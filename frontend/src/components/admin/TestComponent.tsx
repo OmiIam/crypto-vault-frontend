@@ -177,19 +177,9 @@ export default function TestComponent() {
             onClick={runTests} 
             disabled={isRunning}
             variant="crypto"
-            className="flex items-center gap-2"
+            className="px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-xl transition-all duration-200 text-base text-center justify-center"
           >
-            {isRunning ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                Running Tests...
-              </>
-            ) : (
-              <>
-                <TestTube className="w-4 h-4" />
-                Run Tests
-              </>
-            )}
+            {isRunning ? 'Running Tests...' : 'Run Tests'}
           </Button>
         </div>
 

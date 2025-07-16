@@ -25,7 +25,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const baseClasses = `
       w-full px-4 py-3 sm:py-3 rounded-xl transition-all duration-300
       focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed
-      placeholder:text-gray-400 relative min-h-[44px] text-base
+      placeholder:text-white placeholder:opacity-90 relative min-h-[44px] text-base
     `;
 
     const variants = {

@@ -302,12 +302,10 @@ export default function PlatformPreview() {
               {/* Action Buttons */}
               <div className="flex items-center justify-center space-x-4 mt-8">
                 <Button
-                  variant="secondary"
-                  className="group"
+                  className="bg-gradient-to-r from-blue-400 to-blue-600 hover:from-blue-500 hover:to-blue-700 text-white font-semibold shadow-xl shadow-blue-500/20 hover:shadow-2xl hover:shadow-blue-500/40 px-8 py-4 rounded-2xl flex flex-col items-center justify-center transition-all duration-300 group"
                   onClick={() => {/* Demo functionality */}}
                 >
-                  <Play className="mr-2 h-4 w-4 group-hover:scale-110 transition-transform" />
-                  Try Demo
+                  <span className="text-base flex items-center justify-center w-full">Try Demo</span>
                 </Button>
                 <Button
                   className="bg-gradient-to-r from-blue-600 to-purple-600"

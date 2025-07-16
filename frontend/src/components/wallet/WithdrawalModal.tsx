@@ -154,10 +154,10 @@ export default function WithdrawalModal({
             className="space-y-6"
           >
             {/* Balance Info */}
-            <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+            <div className="bg-white/15 rounded-xl p-4 border border-white/25">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-400">Available Balance</p>
+                  <p className="text-sm text-gray-300">Available Balance</p>
                   <p className="text-2xl font-bold text-white">
                     ${availableBalance.toLocaleString()} USDT
                   </p>
@@ -307,21 +307,21 @@ export default function WithdrawalModal({
             </div>
 
             {/* Withdrawal Details */}
-            <div className="bg-white/5 rounded-xl p-6 border border-white/10 space-y-4">
+            <div className="bg-white/15 rounded-xl p-6 border border-white/25 space-y-4">
               <div className="flex justify-between">
-                <span className="text-gray-400">Amount:</span>
+                <span className="text-gray-300">Amount:</span>
                 <span className="text-white font-semibold">${numericAmount.toFixed(2)} USDT</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Network Fee:</span>
+                <span className="text-gray-300">Network Fee:</span>
                 <span className="text-white">-${WITHDRAWAL_FEE} USDT</span>
               </div>
-              <div className="flex justify-between border-t border-white/10 pt-2">
-                <span className="text-gray-400">You Will Receive:</span>
+              <div className="flex justify-between border-t border-white/25 pt-2">
+                <span className="text-gray-300">You Will Receive:</span>
                 <span className="text-white font-bold">${netAmount.toFixed(2)} USDT</span>
               </div>
-              <div className="border-t border-white/10 pt-2">
-                <span className="text-gray-400">To Address:</span>
+              <div className="border-t border-white/25 pt-2">
+                <span className="text-gray-300">To Address:</span>
                 <div className="mt-1 break-all">
                   <code className="text-sm text-white bg-black/20 px-2 py-1 rounded">
                     {address}

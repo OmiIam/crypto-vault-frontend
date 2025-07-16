@@ -17,6 +17,8 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import WarningAlert from '@/components/ui/WarningAlert';
 import StatusBadge from '@/components/ui/StatusBadge';
+import AddressDisplay from '@/components/ui/AddressDisplay';
+import QRCodeDisplay from '@/components/ui/QRCodeDisplay';
 import PaymentTierCards from './PaymentTierCards';
 import { useToast } from '@/hooks/useToast';
 
@@ -37,8 +39,8 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
   const [customAmount, setCustomAmount] = useState<string>('');
   const [addressVerified, setAddressVerified] = useState(false);
   const [lastDigits, setLastDigits] = useState('');
-  const [copied, setCopied] = useState(false);
   const [depositStatus, setDepositStatus] = useState<'idle' | 'pending' | 'confirmed'>('idle');
+  const [showQRFullscreen, setShowQRFullscreen] = useState(false);
   const { toast } = useToast();
 
   const lastSixDigits = USDT_ADDRESS.slice(-6);
@@ -74,15 +76,8 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
     setStep('deposit');
   };
 
-  const copyAddress = async () => {
-    try {
-      await navigator.clipboard.writeText(USDT_ADDRESS);
-      setCopied(true);
-      toast.success('Address Copied', 'Wallet address copied to clipboard');
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      toast.error('Copy Failed', 'Failed to copy address to clipboard');
-    }
+  const handleQRFullscreen = () => {
+    setShowQRFullscreen(true);
   };
 
   const handleAddressVerification = () => {
@@ -110,10 +105,6 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
     }, 2000);
   };
 
-  const generateQRCode = () => {
-    // Simple QR code placeholder - in production, use a proper QR code library
-    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${USDT_ADDRESS}`;
-  };
 
   return (
     <Modal 
@@ -165,7 +156,7 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
                     Continue
                   </Button>
                 </div>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-gray-300">
                   Minimum deposit: ${MIN_DEPOSIT} USDT
                 </p>
               </motion.div>
@@ -174,10 +165,10 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
             {/* Deposit Details */}
             {selectedAmount > 0 && (
               <>
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="bg-white/15 rounded-xl p-4 border border-white/25">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm text-gray-400">Deposit Amount</p>
+                      <p className="text-sm text-gray-300">Deposit Amount</p>
                       <p className="text-2xl font-bold text-white">
                         ${selectedAmount.toLocaleString()} USDT
                       </p>
@@ -214,8 +205,8 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
                       <Shield className="h-5 w-5" />
                       Wallet Address
                     </h3>
-                    <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-                      <p className="text-sm text-gray-400 mb-2">Network: {NETWORK}</p>
+                    <div className="bg-white/15 rounded-xl p-4 border border-white/25">
+                      <p className="text-sm text-gray-300 mb-2">Network: {NETWORK}</p>
                       <div className="flex items-center gap-2">
                         <code className="text-sm text-white bg-black/20 px-2 py-1 rounded break-all">
                           {USDT_ADDRESS}
@@ -294,7 +285,17 @@ export default function DepositModal({ isOpen, onClose, onDepositInitiated }: De
                     loading={depositStatus === 'pending'}
                     className="flex-1"
                   >
-                    {depositStatus === 'pending' ? 'Processing...' : 'I Have Sent the Funds'}
+                    {depositStatus === 'pending' ? (
+                      <>
+                        <Clock className="h-4 w-4 mr-2" />
+                        Processing Deposit...
+                      </>
+                    ) : (
+                      <>
+                        <Shield className="h-4 w-4 mr-2" />
+                        I Have Sent the Funds
+                      </>
+                    )}
                   </Button>
                 </div>
               </>

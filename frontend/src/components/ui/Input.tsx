@@ -25,26 +25,26 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const baseClasses = `
       w-full px-4 py-3 sm:py-3 rounded-xl transition-all duration-300
       focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed
-      placeholder:text-gray-500 relative min-h-[44px] text-base
+      placeholder:text-gray-400 relative min-h-[44px] text-base
     `;
 
     const variants = {
       default: `
-        bg-white/10 backdrop-blur-md border border-white/20 text-white
-        hover:bg-white/15 hover:border-white/30 
-        focus:bg-white/15 focus:border-blue-400/50 focus:ring-blue-400/25
-        ${error ? 'border-red-400/50 focus:border-red-400 focus:ring-red-400/25' : ''}
+        bg-white/20 backdrop-blur-md border border-white/30 text-white
+        hover:bg-white/25 hover:border-white/40 
+        focus:bg-white/25 focus:border-blue-400/60 focus:ring-blue-400/30
+        ${error ? 'border-red-400/60 focus:border-red-400 focus:ring-red-400/30' : ''}
       `,
       floating: `
-        bg-transparent border-b-2 border-white/20 rounded-none px-0 py-2
-        hover:border-white/40 focus:border-blue-400 focus:ring-0
+        bg-transparent border-b-2 border-white/30 rounded-none px-0 py-2
+        hover:border-white/50 focus:border-blue-400 focus:ring-0
         ${error ? 'border-red-400 focus:border-red-400' : ''}
       `,
       minimal: `
-        bg-white/5 border border-white/10 text-white
-        hover:bg-white/10 hover:border-white/20
-        focus:bg-white/10 focus:border-white/30 focus:ring-white/10
-        ${error ? 'border-red-400/30 focus:border-red-400/50 focus:ring-red-400/10' : ''}
+        bg-white/15 border border-white/20 text-white
+        hover:bg-white/20 hover:border-white/30
+        focus:bg-white/20 focus:border-white/40 focus:ring-white/15
+        ${error ? 'border-red-400/40 focus:border-red-400/60 focus:ring-red-400/15' : ''}
       `
     };
 
@@ -57,9 +57,9 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     };
 
     const labelVariants = {
-      default: { y: 0, scale: 1, color: '#9CA3AF' },
+      default: { y: 0, scale: 1, color: '#D1D5DB' },
       focused: { y: -24, scale: 0.85, color: '#60A5FA' },
-      filled: { y: -24, scale: 0.85, color: '#9CA3AF' },
+      filled: { y: -24, scale: 0.85, color: '#D1D5DB' },
       error: { color: '#F87171' }
     };
 
@@ -129,7 +129,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       >
         {label && (
           <motion.label 
-            className="block text-sm font-medium text-gray-300"
+            className="block text-sm font-medium text-gray-200"
             whileHover={{ color: '#ffffff' }}
           >
             {label}

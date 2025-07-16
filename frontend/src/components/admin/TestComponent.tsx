@@ -157,11 +157,11 @@ export default function TestComponent() {
   const getStatusColor = (status: 'pending' | 'passed' | 'failed') => {
     switch (status) {
       case 'pending':
-        return 'border-yellow-400/30 bg-yellow-500/10';
+        return 'border-yellow-400/40 bg-yellow-500/15';
       case 'passed':
-        return 'border-green-400/30 bg-green-500/10';
+        return 'border-green-400/40 bg-green-500/15';
       case 'failed':
-        return 'border-red-400/30 bg-red-500/10';
+        return 'border-red-400/40 bg-red-500/15';
     }
   };
 
@@ -195,7 +195,7 @@ export default function TestComponent() {
 
         <div className="space-y-4">
           {tests.length === 0 ? (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-gray-300">
               <AlertCircle className="w-8 h-8 mx-auto mb-2" />
               <p>Click "Run Tests" to start testing the frontend fixes</p>
             </div>
@@ -225,9 +225,9 @@ export default function TestComponent() {
                         {test.status.toUpperCase()}
                       </span>
                     </div>
-                    <p className="text-gray-300 text-sm mb-2">{test.message}</p>
+                    <p className="text-gray-200 text-sm mb-2">{test.message}</p>
                     {test.details && (
-                      <div className="text-xs text-gray-400 bg-black/20 p-2 rounded font-mono">
+                      <div className="text-xs text-gray-300 bg-black/30 p-2 rounded font-mono">
                         {test.details}
                       </div>
                     )}
@@ -239,7 +239,7 @@ export default function TestComponent() {
         </div>
 
         {tests.length > 0 && (
-          <div className="mt-6 p-4 bg-black/20 rounded-xl">
+          <div className="mt-6 p-4 bg-black/30 rounded-xl">
             <h3 className="font-semibold text-white mb-2">Test Summary</h3>
             <div className="flex gap-4 text-sm">
               <span className="text-green-400">

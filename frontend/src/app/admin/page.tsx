@@ -297,7 +297,7 @@ export default function AdminPage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4"
+            className="bg-blue-500/15 border border-blue-500/30 rounded-xl p-4"
           >
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex items-center gap-2">
@@ -356,8 +356,8 @@ export default function AdminPage() {
             animate={{ opacity: 1, scale: 1 }}
             className={`p-4 rounded-lg ${
               messageType === 'success' 
-                ? 'bg-green-500/20 border border-green-500/30 text-green-200'
-                : 'bg-red-500/20 border border-red-500/30 text-red-200'
+                ? 'bg-green-500/25 border border-green-500/40 text-green-100'
+                : 'bg-red-500/25 border border-red-500/40 text-red-100'
             }`}
           >
             {message}
@@ -370,7 +370,7 @@ export default function AdminPage() {
           transition={{ delay: 0.2 }}
         >
           <Card className="p-0 overflow-hidden">
-            <div className="p-6 bg-white/5 border-b border-white/10">
+            <div className="p-6 bg-white/15 border-b border-white/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Users className="h-5 w-5 text-blue-400 mr-2" />
@@ -392,12 +392,12 @@ export default function AdminPage() {
 
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-sm">
+                <thead className="bg-gradient-to-r from-white/20 via-white/15 to-white/20 backdrop-blur-sm">
                   <tr className="border-b border-white/10">
                     <th className="px-6 py-5 text-left">
                       <motion.button
                         onClick={selectAllUsers}
-                        className="flex items-center gap-3 text-sm font-semibold text-gray-300 hover:text-white transition-all duration-300 group"
+                        className="flex items-center gap-3 text-sm font-semibold text-gray-200 hover:text-white transition-all duration-300 group"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
@@ -420,7 +420,7 @@ export default function AdminPage() {
                     </th>
                     <th className="px-6 py-5 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <span className="text-sm font-semibold text-gray-300">Portfolio Balance</span>
+                        <span className="text-sm font-semibold text-gray-200">Portfolio Balance</span>
                         <motion.div 
                           className="w-2 h-2 bg-green-400 rounded-full"
                           animate={{ scale: [1, 1.2, 1] }}
@@ -429,11 +429,11 @@ export default function AdminPage() {
                       </div>
                     </th>
                     <th className="px-6 py-5 text-center">
-                      <span className="text-sm font-semibold text-gray-300">Management Actions</span>
+                      <span className="text-sm font-semibold text-gray-200">Management Actions</span>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5 bg-gradient-to-b from-transparent to-white/2">
+                <tbody className="divide-y divide-white/10 bg-gradient-to-b from-transparent to-white/5">
                   {users.map((user, index) => (
                     <motion.tr
                       key={user.id}
@@ -445,7 +445,7 @@ export default function AdminPage() {
                         scale: 1.01,
                         transition: { type: "spring", stiffness: 400, damping: 25 }
                       }}
-                      className="group hover:bg-gradient-to-r hover:from-white/8 hover:via-white/5 hover:to-white/8 transition-all duration-500 cursor-pointer border-l-2 border-transparent hover:border-blue-400/50"
+                      className="group hover:bg-gradient-to-r hover:from-white/15 hover:via-white/10 hover:to-white/15 transition-all duration-500 cursor-pointer border-l-2 border-transparent hover:border-blue-400/60"
                     >
                       <td className="px-6 py-6">
                         <div className="flex items-center gap-4">
@@ -486,8 +486,8 @@ export default function AdminPage() {
                                 </motion.span>
                               )}
                             </div>
-                            <div className="text-sm text-gray-400 group-hover:text-gray-300 transition-colors">{user.email}</div>
-                            <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors">
+                            <div className="text-sm text-gray-300 group-hover:text-gray-200 transition-colors">{user.email}</div>
+                            <div className="text-xs text-gray-400 group-hover:text-gray-300 transition-colors">
                               Joined {new Date(user.createdAt).toLocaleDateString()}
                             </div>
                           </div>
@@ -511,7 +511,7 @@ export default function AdminPage() {
                                   ...prev, 
                                   [user.id]: e.target.value 
                                 }))}
-                                className="text-sm py-2 px-3 w-28 bg-white/5"
+                                className="text-sm py-2 px-3 w-28 bg-white/15"
                                 variant="minimal"
                               />
                             </motion.div>

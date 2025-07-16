@@ -127,7 +127,7 @@ export default function PaymentTierCards({ onTierSelect, className = '' }: Payme
                       <span className="text-3xl font-bold text-white">
                         ${tier.amount.toLocaleString()}
                       </span>
-                      <span className="text-gray-400 text-sm">USDT</span>
+                      <span className="text-gray-300 text-sm">USDT</span>
                     </div>
                   ) : (
                     <div className="flex items-center justify-center gap-2">
@@ -171,7 +171,7 @@ export default function PaymentTierCards({ onTierSelect, className = '' }: Payme
                 </Button>
 
                 {/* Tier Highlights */}
-                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-400">
+                <div className="flex items-center justify-center gap-4 mt-4 text-xs text-gray-300">
                   {tier.id === 'starter' && (
                     <div className="flex items-center gap-1">
                       <TrendingUp className="h-3 w-3" />
@@ -211,7 +211,7 @@ export default function PaymentTierCards({ onTierSelect, className = '' }: Payme
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="text-center text-sm text-gray-400"
+        className="text-center text-sm text-gray-300"
       >
         <p>All deposits are processed on the TRC20 network • Minimum deposit: $500 USDT</p>
       </motion.div>

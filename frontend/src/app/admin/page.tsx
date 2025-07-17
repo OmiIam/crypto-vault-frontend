@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, RefreshCw, DollarSign, Trash2, Plus, Eye, CheckSquare, Square } from 'lucide-react';
+import { Users, DollarSign, CheckSquare, Square, Database } from 'lucide-react';
 import Layout from '@/components/Layout';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -34,6 +34,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchUsers();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchUsers = async () => {
@@ -43,7 +44,16 @@ export default function AdminPage() {
       
       if (response.data && Array.isArray(response.data)) {
         console.log('Users fetched successfully:', response.data.length);
-        setUsers(response.data as User[]);
+        const fetchedUsers = response.data as User[];
+        
+        // Check if backend has no users but we have cached data
+        if (fetchedUsers.length === 0 && users.length > 0) {
+          console.log('Backend database appears to be cleared, clearing local cache...');
+          api.clearUserCache();
+          showMessage('Backend database was cleared. Local cache has been cleared as well.', 'success');
+        }
+        
+        setUsers(fetchedUsers);
         setMessage(''); // Clear any previous error messages
       } else if (response.error) {
         console.error('Error fetching users:', response.error);
@@ -239,6 +249,12 @@ export default function AdminPage() {
     setViewingUser({ id: userId, username });
   };
 
+  const handleClearCache = () => {
+    api.clearUserCache();
+    setUsers([]);
+    showMessage('Cache cleared successfully. Click refresh to reload data from server.', 'success');
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -270,6 +286,15 @@ export default function AdminPage() {
               className="px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-xl transition-all duration-200 text-base text-center justify-center"
             >
               Refresh
+            </Button>
+            <Button
+              onClick={handleClearCache}
+              variant="ghost"
+              size="lg"
+              className="px-6 py-3 rounded-xl font-bold shadow-md hover:shadow-xl transition-all duration-200 text-base text-center justify-center text-yellow-400 hover:text-yellow-300"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              Clear Cache
             </Button>
             <Button
               onClick={handleResetAll}

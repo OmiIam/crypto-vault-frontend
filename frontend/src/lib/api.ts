@@ -172,6 +172,16 @@ class ApiClient {
     this.clearToken();
   }
 
+  // Clear all cached user data
+  clearUserCache() {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('rememberMe');
+      console.log('User cache cleared');
+    }
+  }
+
   async getAssets() {
     return this.get('/assets');
   }

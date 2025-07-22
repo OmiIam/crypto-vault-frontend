@@ -31,6 +31,7 @@ export default function AdminPage() {
   const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
   const [viewingUser, setViewingUser] = useState<{ id: number; username: string } | null>(null);
   const [bulkValue, setBulkValue] = useState('');
+  const [leaderboardRefresh, setLeaderboardRefresh] = useState<(() => void) | null>(null);
 
   useEffect(() => {
     fetchUsers();
@@ -50,6 +51,10 @@ export default function AdminPage() {
         if (fetchedUsers.length === 0 && users.length > 0) {
           console.log('Backend database appears to be cleared, clearing local cache...');
           api.clearUserCache();
+          // Also refresh the leaderboard to clear it
+          if (leaderboardRefresh) {
+            leaderboardRefresh();
+          }
           showMessage('Backend database was cleared. Local cache has been cleared as well.', 'success');
         }
         
@@ -109,6 +114,10 @@ export default function AdminPage() {
         setEditingBalance(prev => ({ ...prev, [userId]: '' }));
         // Refresh user data
         await fetchUsers();
+        // Also refresh leaderboard
+        if (leaderboardRefresh) {
+          leaderboardRefresh();
+        }
       }
     } catch (error) {
       console.error('Exception while updating balance:', error);
@@ -147,6 +156,10 @@ export default function AdminPage() {
         showMessage(`${userName}'s portfolio reset successfully`);
         // Refresh user data
         await fetchUsers();
+        // Also refresh leaderboard
+        if (leaderboardRefresh) {
+          leaderboardRefresh();
+        }
       }
     } catch (error) {
       console.error('Exception while resetting portfolio:', error);
@@ -170,6 +183,10 @@ export default function AdminPage() {
       } else {
         showMessage('All portfolios reset successfully');
         fetchUsers();
+        // Also refresh leaderboard
+        if (leaderboardRefresh) {
+          leaderboardRefresh();
+        }
       }
     } catch (error) {
       showMessage('Error resetting portfolios', 'error');
@@ -188,6 +205,10 @@ export default function AdminPage() {
       } else {
         showMessage(`$${amount} bonus added successfully`);
         fetchUsers();
+        // Also refresh leaderboard
+        if (leaderboardRefresh) {
+          leaderboardRefresh();
+        }
       }
     } catch (error) {
       showMessage('Error adding bonus', 'error');
@@ -237,6 +258,10 @@ export default function AdminPage() {
         setSelectedUsers([]);
         setBulkValue('');
         fetchUsers();
+        // Also refresh leaderboard
+        if (leaderboardRefresh) {
+          leaderboardRefresh();
+        }
       }
     } catch (error) {
       showMessage(`Error performing ${action}`, 'error');
@@ -252,6 +277,10 @@ export default function AdminPage() {
   const handleClearCache = () => {
     api.clearUserCache();
     setUsers([]);
+    // Also refresh the leaderboard to clear it
+    if (leaderboardRefresh) {
+      leaderboardRefresh();
+    }
     showMessage('Cache cleared successfully. Click refresh to reload data from server.', 'success');
   };
 
@@ -314,7 +343,10 @@ export default function AdminPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Leaderboard onViewUser={handleViewUser} />
+          <Leaderboard 
+            onViewUser={handleViewUser} 
+            onRefresh={setLeaderboardRefresh}
+          />
         </motion.div>
 
         {/* Bulk Operations */}

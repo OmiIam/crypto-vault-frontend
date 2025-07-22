@@ -21,24 +21,22 @@ interface LeaderboardUser {
 interface LeaderboardProps {
   onViewUser: (userId: number, username: string) => void;
   className?: string;
+  onRefresh?: (refreshFn: () => void) => void;
 }
 
-export default function Leaderboard({ onViewUser, className = '' }: LeaderboardProps) {
+export default function Leaderboard({ onViewUser, className = '', onRefresh }: LeaderboardProps) {
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'totalValue' | 'returnPercent'>('totalValue');
-
-  useEffect(() => {
-    fetchLeaderboard();
-    const interval = setInterval(fetchLeaderboard, 30000); // Update every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
 
   const fetchLeaderboard = async () => {
     try {
       const response = await api.getLeaderboard();
       if (response.data && Array.isArray(response.data)) {
         setLeaderboard(response.data as LeaderboardUser[]);
+      } else {
+        // If no data or empty array, clear the leaderboard
+        setLeaderboard([]);
       }
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
@@ -46,6 +44,18 @@ export default function Leaderboard({ onViewUser, className = '' }: LeaderboardP
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchLeaderboard();
+    const interval = setInterval(fetchLeaderboard, 30000); // Update every 30 seconds
+    
+    // Expose refresh function to parent component
+    if (onRefresh) {
+      onRefresh(fetchLeaderboard);
+    }
+    
+    return () => clearInterval(interval);
+  }, [onRefresh]);
 
   const sortedLeaderboard = [...leaderboard].sort((a, b) => {
     if (sortBy === 'totalValue') {
